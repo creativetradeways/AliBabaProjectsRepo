@@ -1,31 +1,19 @@
-﻿name: CI Build .NET Core API
+name: CI Build .NET Core API
 
 on:
   push:
     branches:
-      - main
+      - Development  # must match your branch
 
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '7.0.x'
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-
-      - name: Test (optional)
-        run: dotnet test --no-build --verbosity normal
-
-      - name: Publish
-        run: dotnet publish -c Release -o published
+      - run: dotnet restore
+      - run: dotnet build --configuration Release --no-restore
+      - run: dotnet test --no-build --verbosity normal
+      - run: dotnet publish -c Release -o published
