@@ -1,0 +1,38 @@
+﻿name: CI Build .NET Core API
+
+# Trigger workflow on push to main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Step 2: Setup .NET SDK
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+
+    # Step 3: Restore NuGet packages
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # Step 4: Build the project
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    # Step 5: Run tests (optional)
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+    # Step 6: Publish app for deployment
+    - name: Publish
+      run: dotnet publish -c Release -o published
