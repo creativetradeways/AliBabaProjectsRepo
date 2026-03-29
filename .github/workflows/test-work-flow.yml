@@ -1,0 +1,22 @@
+name: Test VM Connection
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-connection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test connection to Windows VM
+        uses: microsoft/pwsh@v3
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+          VM_PASS: ${{ secrets.VM_PASS }}
+        run: |
+          $secpasswd = ConvertTo-SecureString $env:VM_PASS -AsPlainText -Force
+          $cred = New-Object System.Management.Automation.PSCredential ($env:VM_USER, $secpasswd)
+
+          Invoke-Command -ComputerName $env:VM_HOST -Credential $cred -ScriptBlock {
+              Write-Host "Connected successfully! VM hostname: $env:COMPUTERNAME"
+          }
