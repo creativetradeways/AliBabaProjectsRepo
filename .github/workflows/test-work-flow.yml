@@ -1,28 +1,38 @@
-name: Test Windows VM Connection
+name: Deploy to Alibaba Windows VM
 
 on:
-  workflow_dispatch:  # Manual trigger
   push:
-    branches: [ master ]  # Optional: test on push to master
+    branches:
+      - main  # or your branch name
 
 jobs:
-  test-connection:
-    runs-on: windows-latest   # Must be Windows to use Invoke-Command
+  deploy:
+    runs-on: windows-latest
+
     steps:
-      - name: Checkout repository
+      # Step 1: Checkout your repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Test VM connection
+      # Step 2: Configure TrustedHosts for the VM
+      - name: Configure TrustedHosts
         shell: pwsh
-        env:
-          VM_HOST: ${{ secrets.VM_HOST }}
-          VM_USER: ${{ secrets.VM_USER }}
-          VM_PASS: ${{ secrets.VM_PASS }}
         run: |
-          $secpasswd = ConvertTo-SecureString $env:VM_PASS -AsPlainText -Force
-          $cred = New-Object System.Management.Automation.PSCredential ($env:VM_USER, $secpasswd)
+          Write-Host "Adding VM to TrustedHosts..."
+          Set-Item WSMan:\localhost\Client\TrustedHosts -Value "${{ secrets.VM_HOST }}" -Force
+          Write-Host "Current TrustedHosts:"
+          Get-Item WSMan:\localhost\Client\TrustedHosts
 
-          # Run a simple command on the VM
-          Invoke-Command -ComputerName $env:VM_HOST -Credential $cred -ScriptBlock {
-              Write-Host "✅ Connected successfully! VM hostname: $env:COMPUTERNAME"
-          }
+      # Step 3: Run commands on the Alibaba Windows VM
+      - name: Execute commands on VM
+        shell: pwsh
+        run: |
+          Write-Host "Connecting to VM..."
+          $secpasswd = ConvertTo-SecureString "${{ secrets.VM_PASS }}" -AsPlainText -Force
+          $cred = New-Object System.Management.Automation.PSCredential ("${{ secrets.VM_USER }}", $secpasswd)
+
+          Invoke-Command -ComputerName "${{ secrets.VM_HOST }}" -Credential $cred -ScriptBlock {
+              # Replace below with your actual commands
+              Get-Process
+              Write-Host "Hello from Alibaba VM!"
+          } -Port 5985
