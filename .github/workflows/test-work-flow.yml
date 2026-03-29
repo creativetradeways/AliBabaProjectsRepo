@@ -1,18 +1,18 @@
-name: Test Deployment to Windows VM
+name: Test Windows VM Connection
 
 on:
+  workflow_dispatch:  # Manual trigger
   push:
-    branches: [ master ]  # Only triggers on master branch
-  workflow_dispatch:       # Allows manual run
+    branches: [ master ]  # Optional: test on push to master
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  test-connection:
+    runs-on: windows-latest   # Must be Windows to use Invoke-Command
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Deploy files to Windows VM
+      - name: Test VM connection
         shell: pwsh
         env:
           VM_HOST: ${{ secrets.VM_HOST }}
@@ -22,20 +22,7 @@ jobs:
           $secpasswd = ConvertTo-SecureString $env:VM_PASS -AsPlainText -Force
           $cred = New-Object System.Management.Automation.PSCredential ($env:VM_USER, $secpasswd)
 
-          # Folder on VM
-          $deployFolder = "C:\deployments\myapp"
-
-          # Deploy to VM
+          # Run a simple command on the VM
           Invoke-Command -ComputerName $env:VM_HOST -Credential $cred -ScriptBlock {
-              param($folder)
-
-              # Create folder if it doesn't exist
-              if (!(Test-Path $folder)) {
-                  New-Item -ItemType Directory -Path $folder
-              }
-
-              # Copy files from GitHub runner to VM
-              Copy-Item -Path "./*" -Destination $folder -Recurse -Force
-
-              Write-Host "✅ Files deployed to $folder"
-          } -ArgumentList $deployFolder
+              Write-Host "✅ Connected successfully! VM hostname: $env:COMPUTERNAME"
+          }
