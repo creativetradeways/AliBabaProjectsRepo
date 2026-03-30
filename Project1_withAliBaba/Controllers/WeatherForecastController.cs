@@ -8,7 +8,7 @@ namespace Project1_withAliBaba.Controllers
     {
         private static readonly string[] Summaries = new[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching", "Thunderstrom", "Thunderstrom2", "Thunderstrom3"
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching", "Thunderstrom"
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
