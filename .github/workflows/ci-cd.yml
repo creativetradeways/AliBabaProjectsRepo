@@ -3,17 +3,56 @@ name: CI Build .NET Core API
 on:
   push:
     branches:
-      - Development  # must match your branch
+      - Development  # Run workflow on pushes to this branch
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: windows-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-dotnet@v3
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Setup .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '7.0.x'
-      - run: dotnet restore
-      - run: dotnet build --configuration Release --no-restore
-      - run: dotnet test --no-build --verbosity normal
-      - run: dotnet publish -c Release -o published
+
+      # Step 3: Restore packages
+      - name: Restore packages
+        run: dotnet restore
+
+      # Step 4: Build project
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore
+
+      # Step 5: Run tests
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
+
+      # Step 6: Publish project
+      - name: Publish project
+        run: dotnet publish -c Release -o published
+
+      # Step 7: Deploy to Alibaba Windows VM
+      # - name: Deploy to VM
+      #   shell: pwsh
+      #   run: |
+      #     # Convert password to secure string
+      #     $secpasswd = ConvertTo-SecureString "${{ secrets.VM_PASS }}" -AsPlainText -Force
+      #     $cred = New-Object System.Management.Automation.PSCredential ("${{ secrets.VM_USER }}", $secpasswd)
+      #
+      #     # Add VM to TrustedHosts
+      #     Set-Item WSMan:\localhost\Client\TrustedHosts -Value "${{ secrets.VM_HOST }}" -Force
+      #
+      #     # Copy published files to the VM
+      #     Copy-Item -Path "published\*" -Destination "\\${{ secrets.VM_HOST }}\C$\inetpub\wwwroot" -Recurse -Force -Credential $cred
+      #
+      #     # Restart IIS to apply new files
+      #     Invoke-Command -ComputerName "${{ secrets.VM_HOST }}" -Credential $cred -ScriptBlock {
+      #         iisreset
+      #         Write-Host "Deployment completed!"
+      #     } -Port 5985
+
