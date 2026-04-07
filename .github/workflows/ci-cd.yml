@@ -36,7 +36,7 @@ jobs:
       - name: Publish project
         run: dotnet publish -c Release -o published
 
-      # Step 7: Deploy to Alibaba Windows VM
+      ## Step 7: Deploy to Alibaba Windows VM
       # - name: Deploy to VM
       #   shell: pwsh
       #   run: |
