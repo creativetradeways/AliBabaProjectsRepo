@@ -1,0 +1,59 @@
+name: CI Build .NET Core API
+
+on:
+  push:
+    branches:
+      - Development  # Run workflow on pushes to this branch
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Setup .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'  # Updated to match your project
+
+      # Step 3: Restore packages
+      - name: Restore packages
+        run: dotnet restore
+
+      # Step 4: Build project
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore
+
+      # Step 5: Run tests
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
+
+      # Step 6: Publish project
+      - name: Publish project
+        run: dotnet publish -c Release -o published
+
+      # -------------------------------
+      # Step 7: Build Docker Image
+      - name: Build Docker image
+        run: |
+          docker build -t project1_withalibaba:dev .
+
+      # Step 8: Tag Docker Image for Alibaba Cloud Registry
+      - name: Tag Docker image for ACR
+        run: |
+          docker tag project1_withalibaba:dev registry.cn-hangzhou.aliyuncs.com/<your-namespace>/project1_withalibaba:dev
+
+      # Step 9: Push Docker Image to Alibaba Cloud Registry (COMMENTED)
+      # - name: Login to Alibaba Cloud Registry
+      #   uses: docker/login-action@v2
+      #   with:
+      #     username: ${{ secrets.ALIBABA_USERNAME }}
+      #     password: ${{ secrets.ALIBABA_PASSWORD }}
+      #
+      # - name: Push Docker image to Alibaba Cloud
+      #   run: |
+      #     docker push registry.cn-hangzhou.aliyuncs.com/<your-namespace>/project1_withalibaba:dev
