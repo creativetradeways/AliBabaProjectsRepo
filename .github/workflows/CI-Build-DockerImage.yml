@@ -39,7 +39,7 @@ jobs:
       # Step 7: Build Docker Image
       - name: Build Docker image
         #run: docker build -t project1_withalibaba:dev .
-        run: docker build -t project1_withalibaba:dev ./Project1_withAliBaba/Project1_withAliBaba
+        run: docker build -t project1_withalibaba:dev ./Project1_withAliBaba
 
       # Step 8: Tag Docker Image for Alibaba Cloud Registry
       - name: Tag Docker image for ACR
