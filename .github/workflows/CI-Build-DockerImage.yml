@@ -1,4 +1,4 @@
-name: CI Build .NET Core API
+name: CI Build .NET Core API with Docker
 
 on:
   push:
