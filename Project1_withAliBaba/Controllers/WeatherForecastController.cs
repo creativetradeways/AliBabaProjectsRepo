@@ -1,33 +1,74 @@
 using Microsoft.AspNetCore.Mvc;
+using Project1_withAliBaba.Models;
 
 namespace Project1_withAliBaba.Controllers
 {
+
     [ApiController]
-    [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    [Route("api/[controller]")]
+    public class ProductsController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
+        private static readonly List<Product> Products = new()
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching", "Thunderstrom_"
+            new Product { Id = 1, Name = "Laptop", Price = 2500 },
+            new Product { Id = 2, Name = "Mobile", Price = 1200 }
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        [HttpGet]
+        public IActionResult GetAll()
         {
-            _logger = logger;
+            return Ok(Products);
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            var product = Products.FirstOrDefault(x => x.Id == id);
+
+            if (product == null)
+                return NotFound();
+
+            return Ok(product);
+        }
+
+        [HttpPost]
+        public IActionResult Create(Product product)
+        {
+            product.Id = Products.Max(x => x.Id) + 1;
+
+            Products.Add(product);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = product.Id },
+                product);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, Product updatedProduct)
+        {
+            var product = Products.FirstOrDefault(x => x.Id == id);
+
+            if (product == null)
+                return NotFound();
+
+            product.Name = updatedProduct.Name;
+            product.Price = updatedProduct.Price;
+
+            return Ok(product);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var product = Products.FirstOrDefault(x => x.Id == id);
+
+            if (product == null)
+                return NotFound();
+
+            Products.Remove(product);
+
+            return NoContent();
         }
     }
 }
