@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - Development
+      
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build-and-deploy:
@@ -41,6 +45,23 @@ jobs:
         #run: docker build -t project1_withalibaba:dev .
         run: docker build -t project1_withalibaba:dev ./Project1_withAliBaba
 
+        # Step 8: Login to GHCR
+        - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+        # Step 9: Tag Docker Image
+        - name: Tag Docker image
+        run: docker tag project1_withalibaba:dev ghcr.io/${{ github.repository_owner }}/project1_withalibaba:dev
+
+        # Step 10: Push Docker Image to GHCR
+        - name: Push Docker image to GHCR
+        run: docker push ghcr.io/${{ github.repository_owner }}/project1_withalibaba:dev
+        
+        
       # Step 8: Tag Docker Image for Alibaba Cloud Registry
       #- name: Tag Docker image for ACR
       #  run: docker tag project1_withalibaba:dev registry.cn-hangzhou.aliyuncs.com/<your-namespace>/project1_withalibaba:dev

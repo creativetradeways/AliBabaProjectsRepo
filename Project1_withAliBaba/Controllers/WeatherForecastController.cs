@@ -11,7 +11,8 @@ namespace Project1_withAliBaba.Controllers
         private static readonly List<Product> Products = new()
         {
             new Product { Id = 1, Name = "Laptop", Price = 2500 },
-            new Product { Id = 2, Name = "Mobile", Price = 1200 }
+            new Product { Id = 2, Name = "Mobile", Price = 1200 },
+            new Product { Id = 3, Name = "TV", Price = 1200 }
         };
 
         [HttpGet]
