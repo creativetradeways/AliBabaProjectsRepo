@@ -49,9 +49,9 @@ jobs:
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+            registry: ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
         
         # Step 9: Tag Docker Image
       - name: Tag Docker image
