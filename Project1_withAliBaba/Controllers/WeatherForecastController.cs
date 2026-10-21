@@ -12,7 +12,8 @@ namespace Project1_withAliBaba.Controllers
         {
             new Product { Id = 1, Name = "Laptop", Price = 2500 },
             new Product { Id = 2, Name = "Mobile", Price = 1200 },
-            new Product { Id = 3, Name = "TV", Price = 1200 }
+            new Product { Id = 3, Name = "TV", Price = 1800 },
+            new Product { Id = 3, Name = "Iron", Price =1000 }
         };
 
         [HttpGet]

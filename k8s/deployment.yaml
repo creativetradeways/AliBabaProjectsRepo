@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: project1-api
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: project1-api
+
+  template:
+    metadata:
+      labels:
+        app: project1-api
+
+    spec:
+      containers:
+        - name: project1-api
+          image: ghcr.io/creativetradeways/project1_withalibaba:dev
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: project1-secret
+          volumeMounts:
+            - name: project1-storage
+              mountPath: /app/logs
+      volumes:
+        - name: project1-storage
+          persistentVolumeClaim:
+           claimName: project1-pvc
