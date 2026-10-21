@@ -55,11 +55,11 @@ jobs:
         
         # Step 9: Tag Docker Image
       - name: Tag Docker image
-        run: docker tag project1_withalibaba:dev ghcr.io/${{ github.repository_owner }}/project1_withalibaba:dev
+        run: docker tag project1_withalibaba:dev ghcr.io/${{ github.repository_owner }}/project1_withalibaba:${{ github.sha }}
 
         # Step 10: Push Docker Image to GHCR
       - name: Push Docker image to GHCR
-        run: docker push ghcr.io/${{ github.repository_owner }}/project1_withalibaba:dev
+        run: docker push ghcr.io/${{ github.repository_owner }}/project1_withalibaba:${{ github.sha }}
         
         
       # Step 8: Tag Docker Image for Alibaba Cloud Registry
