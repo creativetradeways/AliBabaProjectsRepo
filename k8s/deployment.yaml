@@ -19,16 +19,18 @@ spec:
     spec:
       containers:
         - name: project1-api
-          image: ghcr.io/creativetradeways/project1_withalibaba:dev
+          image: ghcr.io/creativetradeways/project1_withalibaba:971ff9e42df672bc8efd2998aa8a42ee4f83f08a
           ports:
             - containerPort: 8080
           envFrom:
-            - secretRef:
-                name: project1-secret
-          volumeMounts:
-            - name: project1-storage
-              mountPath: /app/logs
-      volumes:
-        - name: project1-storage
-          persistentVolumeClaim:
-           claimName: project1-pvc
+            - secretRef:    #For sensitive data
+                name: project1-secret 
+            - configMapRef: #For Non-Sensitive data
+                name: project1-config
+          #volumeMounts:
+          #  - name: project1-storage
+          #    mountPath: /app/logs
+      #volumes:
+      #  - name: project1-storage
+      #    persistentVolumeClaim:
+      #     claimName: project1-pvc
